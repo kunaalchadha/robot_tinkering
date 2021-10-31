@@ -14,4 +14,5 @@ This workflow has been integrated into the grasshopper environment based on the 
 ****Universal Robots using****
 The following is a rework on the example file provided by Universal Robots for E series using Real-Time Data Exchange (RTDE) library([https://www.universal-robots.com/articles/ur/interface-communication/real-time-data-exchange-rtde-guide/](url))
 
-![rtde_UR](https://user-images.githubusercontent.com/88770685/139600882-7ab359d3-aab1-4eeb-aec8-bc11b13333b2.jpg)
+![rtde_UR](https://user-images.githubusercontent.com/88770685/139600904-edd84962-c59c-47fd-a446-4e0123f4f91e.jpg)
+
