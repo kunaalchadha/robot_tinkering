@@ -2,6 +2,7 @@ import socket
 import time
 import struct
 import codecs
+import math
 import time
 from datetime import datetime
 
@@ -13,7 +14,8 @@ def time_stamp():
     return (time_stamp)
 
 def ByteUnpacHex(packet):
- 
+    
+    
     try:
         tempPack = packet.hex()
         x = struct.unpack('!d', codecs.decode(tempPack,'hex'))[0]
@@ -81,38 +83,43 @@ def GetDataRange(DataInds):
                 outPacks.append([deadBytes,False,-1])
             outPacks.append(bPack)
             deadBytes = 0
-
+   
     return outPacks
+            
+def GrabData(DataInds,HOST = "192.168.10.10",PORT_30003 = 30003):
 
-def GrabData(DataInds): 
-    
+    print ("Starting Program")
+    count = 0
+    home_status = 0
+    program_run = 0
     outPacks = GetDataRange(DataInds)
     OutDict = {}
-    for bPack in outPacks:
-        locPacket = s.recv(bPack[0])
-        if bPack[1]==True:
-            locPacket = ByteUnpacHex(locPacket)
-            if bPack[2] in list(OutDict.keys()):
-                OutDict[bPack[2]].append(locPacket)
-                # print ('received')
-            else:
-                OutDict.update({bPack[2]:[locPacket]})
-    return(OutDict)
+    if program_run == 0:
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(10)
+            s.connect((HOST, PORT_30003))
+            time.sleep(0.2)
+            print ("")
+            for bPack in outPacks:
+                
+                locPacket =s.recv(bPack[0])
+                if bPack[1]==True:
+                    locPacket = ByteUnpacHex(locPacket)
+                    if bPack[2] in list(OutDict.keys()):
+                        OutDict[bPack[2]].append(locPacket)
+                    else:
+                        OutDict.update({bPack[2]:[locPacket]})
+            home_status = 1
+            program_run = 0
 
-if __name__ =="__main__":
-    PORT_30003 = 30003
-    HOST = "192.168.10.10"
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((HOST, PORT_30003)) 
-
-    while True:
-        try: 
-            data = GrabData([14])
-            time.sleep(0.1)
-            print('opened')
-            print (data)
-        except KeyboardInterrupt:
-            print("stopping")
+        except socket.error as socketerror:
             s.close()
-            break
+            print("Error: ", socketerror)
+    s.close()
+    return(OutDict)
     print ("Program finish")
+    
+if __name__ =="__main__":
+    while True:
+        print (GrabData([14])) # 14 is for TCP force, CHeck excel fild ofr Data index
